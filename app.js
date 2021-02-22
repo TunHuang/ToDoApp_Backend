@@ -12,7 +12,16 @@ var app = express();
 
 const uri = process.env.MONGO ?? 'mongodb://localhost:27017/todo';
 
-console.log(uri);
+// const client = new MongoClient();
+// client.on('error', error => console.log(error));
+// client.once('open', () => console.log('Mit Datenbank verbunden'));
+
+// client.connect(uri, {
+//   useNewUrlParser: true,
+//   useCreateIndex: true,
+//   useUnifiedTopology: true,
+//   useFindAndModify: false
+// });
 
 mongoose.connect(uri, {
   useNewUrlParser: true,

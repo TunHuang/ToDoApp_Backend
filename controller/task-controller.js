@@ -19,7 +19,18 @@ const postTask = async (req, res, next) => {
   }
 };
 
+const deleteTask = async (req, res, next) => {
+  try {
+    const _id = req.params.id;
+    const result = await Task.deleteOne({ _id });
+    res.status(200).send(result);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 module.exports = {
   getAllTasks,
-  postTask
+  postTask,
+  deleteTask
 };

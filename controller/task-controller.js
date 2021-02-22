@@ -1,12 +1,13 @@
 const Task = require('../models/task-model');
-// const createError = require('http-errors');
+const createError = require('http-errors');
 
 const getAllTasks = async (req, res, next) => {
   try {
     const tasks = await Task.find();
     res.status(200).send(tasks);
   } catch (err) {
-    console.log(err);
+    const error = createError(500, 'Fehler beim GET auf /tasks/ ' + err);
+    next(error);
   }
 };
 
@@ -15,7 +16,8 @@ const postTask = async (req, res, next) => {
     const createdTask = await Task.create(req.body);
     res.status(201).send(createdTask);
   } catch (err) {
-    console.log(err);
+    const error = createError(500, 'Fehler beim POST auf /tasks/ ' + err);
+    next(error);
   }
 };
 
@@ -25,7 +27,8 @@ const deleteTask = async (req, res, next) => {
     const result = await Task.deleteOne({ _id });
     res.status(200).send(result);
   } catch (err) {
-    console.log(err);
+    const error = createError(500, 'Fehler beim DELETE auf /tasks/:id ' + err);
+    next(error);
   }
 };
 

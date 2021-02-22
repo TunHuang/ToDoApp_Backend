@@ -3,10 +3,13 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mongoose = require('mongoose');
+const errorMiddleware = require('./middleware/errorMiddleware');
 
+// Routes
 var indexRouter = require('./routes/index');
 // var usersRouter = require('./routes/users');
 const tasksRouter = require('./routes/tasks');
+const deadlinkRouter = require('./routes/deadlink');
 
 var app = express();
 
@@ -45,5 +48,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 // app.use('/users', usersRouter);
 app.use('/tasks', tasksRouter);
+
+// Route um 404 abzufangen und als Fehler auszugeben
+app.use('*', deadlinkRouter);
+
+// Fehler-Middleware
+app.use(errorMiddleware);
 
 module.exports = app;

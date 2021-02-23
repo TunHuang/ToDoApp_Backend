@@ -8,10 +8,12 @@ const {
   deleteUserWithId,
 } = require('../controller/user-controller');
 
+const { validUser } = require('../validations/user-validation');
+
 router
   .route('/')
     .get(getAllUsers)
-    .post(postUser)
+    .post(validUser, postUser)
 ;
 
 router

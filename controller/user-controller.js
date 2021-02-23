@@ -1,5 +1,6 @@
 const User = require('../models/user-model');
 const createError = require('http-errors');
+const { validationResult } = require('express-validator');
 
 const getAllUsers = async (req, res, next) => {
   try {
@@ -13,8 +14,15 @@ const getAllUsers = async (req, res, next) => {
 
 const postUser = async (req, res, next) => {
   try {
-    const createdUser = await User.create(req.body);
-    res.status(201).send(createdUser);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(422).json({
+        fehlerBeiValidierung: errors.array()
+      });
+    } else {
+      const createdUser = await User.create(req.body);
+      res.status(201).send(createdUser);
+    }
   } catch (err) {
     const error = createError(500, 'Fehler beim POST auf /users/sign/ ' + err);
     next(error);

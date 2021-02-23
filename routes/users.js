@@ -5,11 +5,15 @@ const {
   getAllUsers,
   postUser,
   getUserWithId,
+  updateUserWithId,
   deleteUserWithId,
   loginUser
 } = require('../controller/user-controller');
 
-const { validUser } = require('../validations/user-validation');
+const {
+  validUser,
+  validUserUpdate
+} = require('../validations/user-validation');
 
 router
   .route('/')
@@ -20,7 +24,7 @@ router
 router
   .route('/:id')
     .get(getUserWithId)
-    // .put()
+    .put(validUserUpdate, updateUserWithId)
     .delete(deleteUserWithId)
 ;
 

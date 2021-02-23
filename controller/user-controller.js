@@ -51,6 +51,35 @@ const getUserWithId = async (req, res, next) => {
   }
 };
 
+const updateUserWithId = async (req, res, next) => {
+  try {
+    const newData = req.body;
+    const _id = req.params.id;
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(422).json({
+        fehlerBeiValidierung: errors.array()
+      });
+    } else {
+      const existedUser = await User.findOne({ email: newData.email });
+      if (existedUser) {
+        const error = createError(409, 'Es gibt bereits einen Nutzer mit der Email-Adresse.');
+        next(error);
+      } else if (newData.password) {
+        const hashedPassword = await bcrypt.hash(newData.password, 10);
+        const updatedUser = await User.findOneAndUpdate({ _id }, { ...newData, password: hashedPassword }, { new: true });
+        res.status(200).send(updatedUser);
+      } else {
+        const updatedUser = await User.findOneAndUpdate({ _id }, newData, { new: true });
+        res.status(200).send(updatedUser);
+      }
+    }
+  } catch (err) {
+    const error = createError(500, 'Fehler bei PUT auf /users/ mit ID ' + err);
+    next(error);
+  }
+};
+
 const deleteUserWithId = async (req, res, next) => {
   try {
     const _id = req.params.id;
@@ -96,6 +125,7 @@ module.exports = {
   getAllUsers,
   postUser,
   getUserWithId,
+  updateUserWithId,
   deleteUserWithId,
   loginUser
 };

@@ -8,7 +8,7 @@ const corsMiddleware = require('./middleware/corsMiddleware');
 
 // Routes
 var indexRouter = require('./routes/index');
-// var usersRouter = require('./routes/users');
+var usersRouter = require('./routes/users');
 const tasksRouter = require('./routes/tasks');
 const deadlinkRouter = require('./routes/deadlink');
 
@@ -39,7 +39,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(corsMiddleware);
 
 app.use('/', indexRouter);
-// app.use('/users', usersRouter);
+app.use('/users', usersRouter);
 app.use('/tasks', tasksRouter);
 
 // Route um 404 abzufangen und als Fehler auszugeben

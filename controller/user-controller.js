@@ -1,6 +1,8 @@
 const User = require('../models/user-model');
 const createError = require('http-errors');
 const { validationResult } = require('express-validator');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const getAllUsers = async (req, res, next) => {
   try {
@@ -27,12 +29,13 @@ const postUser = async (req, res, next) => {
         const error = createError(409, 'Es gibt bereits einen Nutzer mit der Email-Adresse.');
         next(error);
       } else {
-        const createdUser = await User.create(req.body);
+        const hashedPassword = await bcrypt.hash(newUser.password, 10);
+        const createdUser = await User.create({ ...newUser, password: hashedPassword});
         res.status(201).send(createdUser);
       }
     }
   } catch (err) {
-    const error = createError(500, 'Fehler beim POST auf /users/sign/ ' + err);
+    const error = createError(500, 'Fehler beim POST auf /users/ ' + err);
     next(error);
   }
 };

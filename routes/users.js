@@ -6,6 +6,7 @@ const {
   postUser,
   getUserWithId,
   deleteUserWithId,
+  loginUser
 } = require('../controller/user-controller');
 
 const { validUser } = require('../validations/user-validation');
@@ -23,9 +24,9 @@ router
     .delete(deleteUserWithId)
 ;
 
-// router
-//   .route('/login')
-//     .post()
-// ;
+router
+  .route('/login')
+    .post(loginUser)
+;
 
 module.exports = router;

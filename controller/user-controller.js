@@ -23,9 +23,9 @@ const postUser = async (req, res, next) => {
       });
     } else {
       const newUser = req.body;
-      const existedUser = await User.find({ email: newUser.email });
+      const existedUser = await User.findOne({ email: newUser.email });
       console.log(existedUser);
-      if (existedUser.length > 0) {
+      if (existedUser) {
         const error = createError(409, 'Es gibt bereits einen Nutzer mit der Email-Adresse.');
         next(error);
       } else {
@@ -62,9 +62,40 @@ const deleteUserWithId = async (req, res, next) => {
   }
 };
 
+const loginUser = async (req, res, next) => {
+  try {
+    const userData = req.body;
+    const userFromDb = await User.findOne({ email: userData.email });
+    if (!userFromDb) {
+      const error = createError(401, 'Einloggen fehlgeschlagen. ' + err);
+      next(error);
+    } else {
+      const passwordComparison = await bcrypt.compare(userData.password, userFromDb.password);
+      if (!passwordComparison) {
+        const error = createError(401, 'Einloggen fehlgeschlagen. ' + err);
+        next(error);
+      } else {
+        const token = jwt.sign({
+          email: userFromDb.email,
+          userId: userFromDb._id
+        }, process.env.JWT ?? 'Geheimnis', { expiresIn: '1h' });
+        res.status(200).json({
+          nachricht: 'Du bist eingeloggt',
+          userId: userFromDb._id,
+          token: token
+        });
+      }
+    }
+  } catch (err) {
+    const error = createError(401, 'Einloggen fehlgeschlagen. ' + err);
+    next(error);
+  }
+};
+
 module.exports = {
   getAllUsers,
   postUser,
   getUserWithId,
   deleteUserWithId,
+  loginUser
 };

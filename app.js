@@ -4,6 +4,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const mongoose = require('mongoose');
 const errorMiddleware = require('./middleware/errorMiddleware');
+const corsMiddleware = require('./middleware/corsMiddleware');
 
 // Routes
 var indexRouter = require('./routes/index');
@@ -14,17 +15,6 @@ const deadlinkRouter = require('./routes/deadlink');
 var app = express();
 
 const uri = process.env.MONGO ?? 'mongodb://localhost:27017/todo';
-
-// const client = new MongoClient();
-// client.on('error', error => console.log(error));
-// client.once('open', () => console.log('Mit Datenbank verbunden'));
-
-// client.connect(uri, {
-//   useNewUrlParser: true,
-//   useCreateIndex: true,
-//   useUnifiedTopology: true,
-//   useFindAndModify: false
-// });
 
 mongoose.connect(uri, {
   useNewUrlParser: true,
@@ -44,6 +34,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Middleware zum Erlauben von CORS
+app.use(corsMiddleware);
 
 app.use('/', indexRouter);
 // app.use('/users', usersRouter);

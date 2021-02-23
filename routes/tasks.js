@@ -7,10 +7,12 @@ const {
   deleteTask
 } = require('../controller/task-controller');
 
+const { validTask } = require('../validations/task-validation');
+
 router
   .route('/')
     .get(getAllTasks)
-    .post(postTask)
+    .post(validTask, postTask)
 ;
 
 router

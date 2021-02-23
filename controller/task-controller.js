@@ -1,5 +1,6 @@
 const Task = require('../models/task-model');
 const createError = require('http-errors');
+const { validationResult } = require('express-validator');
 
 const getAllTasks = async (req, res, next) => {
   try {
@@ -13,8 +14,15 @@ const getAllTasks = async (req, res, next) => {
 
 const postTask = async (req, res, next) => {
   try {
-    const createdTask = await Task.create(req.body);
-    res.status(201).send(createdTask);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(422).json({
+        fehlerBeiValidierung: errors.array()
+      });
+    } else {
+      const createdTask = await Task.create(req.body);
+      res.status(201).send(createdTask);
+    }
   } catch (err) {
     const error = createError(500, 'Fehler beim POST auf /tasks/ ' + err);
     next(error);

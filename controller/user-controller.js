@@ -20,8 +20,16 @@ const postUser = async (req, res, next) => {
         fehlerBeiValidierung: errors.array()
       });
     } else {
-      const createdUser = await User.create(req.body);
-      res.status(201).send(createdUser);
+      const newUser = req.body;
+      const existedUser = await User.find({ email: newUser.email });
+      console.log(existedUser);
+      if (existedUser.length > 0) {
+        const error = createError(409, 'Es gibt bereits einen Nutzer mit der Email-Adresse.');
+        next(error);
+      } else {
+        const createdUser = await User.create(req.body);
+        res.status(201).send(createdUser);
+      }
     }
   } catch (err) {
     const error = createError(500, 'Fehler beim POST auf /users/sign/ ' + err);

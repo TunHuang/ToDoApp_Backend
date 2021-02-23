@@ -4,10 +4,14 @@ const router = express.Router();
 const {
   getAllTasks,
   postTask,
+  updateTask,
   deleteTask
 } = require('../controller/task-controller');
 
-const { validTask } = require('../validations/task-validation');
+const {
+  validTask,
+  validTaskUpdate
+} = require('../validations/task-validation');
 
 router
   .route('/')
@@ -17,7 +21,7 @@ router
 
 router
   .route('/:id')
-    // .put()
+    .put(validTaskUpdate, updateTask)
     .delete(deleteTask)
 ;
 

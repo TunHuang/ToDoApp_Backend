@@ -29,6 +29,25 @@ const postTask = async (req, res, next) => {
   }
 };
 
+const updateTask = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(422).json({
+        fehlerBeiValidierung: errors.array()
+      });
+    } else {
+      const newData = req.body;
+      const _id = req.params.id;
+      const updatedTask = await Task.findOneAndUpdate({ _id }, newData, { new: true });
+      res.status(200).send(updatedTask);
+    }
+  } catch (err) {
+    const error = createError(500, 'Fehler bei PUT auf /tasks/ mit ID ' + err);
+    next(error);
+  }
+};
+
 const deleteTask = async (req, res, next) => {
   try {
     const _id = req.params.id;
@@ -43,5 +62,6 @@ const deleteTask = async (req, res, next) => {
 module.exports = {
   getAllTasks,
   postTask,
+  updateTask,
   deleteTask
 };

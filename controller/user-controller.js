@@ -62,7 +62,7 @@ const updateUserWithId = async (req, res, next) => {
       });
     } else {
       const existedUser = await User.findOne({ email: newData.email });
-      if (existedUser) {
+      if (existedUser && existedUser._id != _id) {
         const error = createError(409, 'Es gibt bereits einen Nutzer mit der Email-Adresse.');
         next(error);
       } else if (newData.password) {

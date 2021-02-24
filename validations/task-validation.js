@@ -23,6 +23,7 @@ const validTask = [
     .isBoolean()
     .withMessage('Completed muss ein Boolean sein'),
   check('userId')
+    .optional()
     .not()
     .isEmpty()
     .withMessage('User ID muss angegeben werden')

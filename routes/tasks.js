@@ -3,7 +3,8 @@ const router = express.Router();
 
 const {
   getAllTasks,
-  postTask,
+  postTaskAsAdmin,
+  postTaskAsUser,
   updateTask,
   deleteTask
 } = require('../controller/task-controller');
@@ -16,11 +17,12 @@ const {
 router
   .route('/')
     .get(getAllTasks)
-    .post(validTask, postTask)
+    .post(validTask, postTaskAsAdmin)
 ;
 
 router
   .route('/:id')
+    .post(validTask, postTaskAsUser)
     .put(validTaskUpdate, updateTask)
     .delete(deleteTask)
 ;

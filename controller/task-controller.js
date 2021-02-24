@@ -12,7 +12,7 @@ const getAllTasks = async (req, res, next) => {
   }
 };
 
-const postTask = async (req, res, next) => {
+const postTaskAsAdmin = async (req, res, next) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -21,6 +21,25 @@ const postTask = async (req, res, next) => {
       });
     } else {
       const createdTask = await Task.create(req.body);
+      res.status(201).send(createdTask);
+    }
+  } catch (err) {
+    const error = createError(500, 'Fehler beim POST auf /tasks/ ' + err);
+    next(error);
+  }
+};
+
+const postTaskAsUser = async (req, res, next) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.status(422).json({
+        fehlerBeiValidierung: errors.array()
+      });
+    } else {
+      const newTask = req.body;
+      const userId = req.params.id;
+      const createdTask = await Task.create({...newTask, userId});
       res.status(201).send(createdTask);
     }
   } catch (err) {
@@ -61,7 +80,8 @@ const deleteTask = async (req, res, next) => {
 
 module.exports = {
   getAllTasks,
-  postTask,
+  postTaskAsAdmin,
+  postTaskAsUser,
   updateTask,
   deleteTask
 };

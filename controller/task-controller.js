@@ -14,8 +14,10 @@ const getAllTasks = async (req, res, next) => {
 
 const postTaskAsAdmin = async (req, res, next) => {
   try {
+    console.log(req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log(errors.array());
       res.status(422).json({
         fehlerBeiValidierung: errors.array()
       });

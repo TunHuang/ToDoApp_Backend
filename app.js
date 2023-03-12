@@ -6,6 +6,8 @@ const mongoose = require('mongoose');
 const errorMiddleware = require('./middleware/errorMiddleware');
 const corsMiddleware = require('./middleware/corsMiddleware');
 
+const proxy = require('express-http-proxy');
+
 // Routes
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -20,12 +22,12 @@ mongoose.connect(uri, {
   useNewUrlParser: true,
   useCreateIndex: true,
   useUnifiedTopology: true,
-  useFindAndModify: false
+  useFindAndModify: false,
 });
 
 let db = mongoose.connection;
 
-db.on('error', error => console.log(error));
+db.on('error', (error) => console.log(error));
 
 db.once('open', () => console.log('Mit Datenbank verbunden'));
 
@@ -41,6 +43,8 @@ app.use(corsMiddleware);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/tasks', tasksRouter);
+
+app.use('/trivia-api', proxy('http://numbersapi.com'));
 
 // Route um 404 abzufangen und als Fehler auszugeben
 app.use('*', deadlinkRouter);
